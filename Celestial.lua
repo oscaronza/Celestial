@@ -108,9 +108,10 @@ scrollFrame.Size = UDim2.new(0, 460, 0, 140)
 scrollFrame.Position = UDim2.new(0.5, -230, 0, 160)
 scrollFrame.BackgroundColor3 = Color3.fromRGB(15, 18, 32)
 scrollFrame.BorderSizePixel = 0
-scrollFrame.CanvasSize = UDim2.new(0, 0, 5, 0)
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)  -- Changed: start at 0 height (we'll auto-update it)
 scrollFrame.ScrollBarThickness = 6
 scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 190, 255)
+scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y  -- Added: only scroll vertically
 scrollFrame.Parent = mainFrame
 
 -- Input box
@@ -127,7 +128,6 @@ inputBox.TextYAlignment = Enum.TextYAlignment.Top
 inputBox.TextSize = 15
 inputBox.Font = Enum.Font.Code
 inputBox.Parent = scrollFrame
-
 local inputCorner = Instance.new("UICorner")
 inputCorner.CornerRadius = UDim.new(0, 10)
 inputCorner.Parent = inputBox
@@ -142,10 +142,15 @@ inputBox.Focused:Connect(function()
 end)
 
 -- Update canvas size dynamically
-inputBox:GetPropertyChangedSignal("Text"):Connect(function()
-	local textSize = inputBox.TextBounds.Y + 20
-	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, math.max(textSize, scrollFrame.AbsoluteSize.Y))
-end)
+local function updateCanvas()
+    local textHeight = inputBox.TextBounds.Y
+    local extraPadding = 50  -- tweak this number if text feels too close/far from bottom
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, textHeight + extraPadding)
+end
+
+updateCanvas()  -- Run once at start
+
+inputBox:GetPropertyChangedSignal("Text"):Connect(updateCanvas)
 
 -- =====================================
 -- Drag Bar
