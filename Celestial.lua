@@ -308,5 +308,63 @@ end)
 settings.MouseButton1Click:Connect(function()
 	print("Settings pressed")
 end)
+-- Settings button functionality
+settings.MouseButton1Click:Connect(function()
+    -- Prevent multiple panels
+    if mainFrame:FindFirstChild("SettingsPanel") then return end
 
+    -- Create Settings Panel
+    local settingsPanel = Instance.new("Frame")
+    settingsPanel.Name = "SettingsPanel"
+    settingsPanel.Size = UDim2.new(0, 300, 0, 180)
+    settingsPanel.Position = UDim2.new(0.5, -150, 0.5, -90)
+    settingsPanel.BackgroundColor3 = Color3.fromRGB(20, 25, 40)
+    settingsPanel.BorderSizePixel = 0
+    settingsPanel.ZIndex = 200
+    settingsPanel.Parent = mainFrame
+
+    local corner = Instance.new("UICorner", settingsPanel)
+    corner.CornerRadius = UDim.new(0, 12)
+
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 40)
+    title.Position = UDim2.new(0, 0, 0, 0)
+    title.BackgroundTransparency = 1
+    title.Text = "Settings"
+    title.TextColor3 = Color3.fromRGB(200, 230, 255)
+    title.TextSize = 22
+    title.Font = Enum.Font.GothamBold
+    title.Parent = settingsPanel
+
+    -- Terminate Button
+    local terminateBtn = Instance.new("TextButton")
+    terminateBtn.Size = UDim2.new(0, 200, 0, 60)
+    terminateBtn.Position = UDim2.new(0.5, -100, 0.5, -30)
+    terminateBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+    terminateBtn.Text = "TERMINATE"
+    terminateBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    terminateBtn.TextSize = 24
+    terminateBtn.Font = Enum.Font.GothamBlack
+    terminateBtn.Parent = settingsPanel
+
+    local btnCorner = Instance.new("UICorner", terminateBtn)
+    btnCorner.CornerRadius = UDim.new(0, 12)
+
+    terminateBtn.MouseEnter:Connect(function()
+        terminateBtn.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+    end)
+
+    terminateBtn.MouseLeave:Connect(function()
+        terminateBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+    end)
+
+    terminateBtn.MouseButton1Click:Connect(function()
+        -- Destroy the entire Celestial UI
+        if screenGui then
+            screenGui:Destroy()
+        end
+        getgenv().CelestialLoaded = false
+        warn("Celestial terminated")
+    end)
+end)
 print("Celestial UI loaded • made by oscar")
