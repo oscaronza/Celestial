@@ -274,8 +274,13 @@ local clear = btn("🧹")
 local open = btn("📂")
 local save = btn("💾")
 local settings = btn("⚙")
+-- Parent buttons
+for _, b in ipairs({run, clear, open, save, settings}) do
+	b.Parent = bottomBar
+end
+
 -- ===============================
--- Settings Panel UI
+-- Settings Panel
 -- ===============================
 settings.MouseButton1Click:Connect(function()
 	-- Prevent duplicate panels
@@ -299,8 +304,8 @@ settings.MouseButton1Click:Connect(function()
 
 	-- Title
 	local title = Instance.new("TextLabel")
-	title.Size = UDim2.new(1, -40, 0, 40)
-	title.Position = UDim2.new(0, 20, 0, 10)
+	title.Size = UDim2.new(1, 0, 0, 40)
+	title.Position = UDim2.new(0, 0, 0, 10)
 	title.BackgroundTransparency = 1
 	title.Text = "Settings"
 	title.Font = Enum.Font.GothamBold
@@ -309,10 +314,10 @@ settings.MouseButton1Click:Connect(function()
 	title.ZIndex = 501
 	title.Parent = panel
 
-	-- Close Button
+	-- Close button
 	local close = Instance.new("TextButton")
 	close.Size = UDim2.new(0, 32, 0, 32)
-	close.Position = UDim2.new(1, -42, 0, 10)
+	close.Position = UDim2.new(1, -42, 0, 8)
 	close.Text = "✕"
 	close.Font = Enum.Font.GothamBold
 	close.TextSize = 18
@@ -327,7 +332,7 @@ settings.MouseButton1Click:Connect(function()
 		panel:Destroy()
 	end)
 
-	-- TERMINATE BUTTON
+	-- TERMINATE button
 	local terminate = Instance.new("TextButton")
 	terminate.Size = UDim2.new(0, 220, 0, 60)
 	terminate.Position = UDim2.new(0.5, -110, 0.5, -10)
@@ -342,14 +347,6 @@ settings.MouseButton1Click:Connect(function()
 
 	Instance.new("UICorner", terminate).CornerRadius = UDim.new(0, 14)
 
-	terminate.MouseEnter:Connect(function()
-		terminate.BackgroundColor3 = Color3.fromRGB(240, 80, 80)
-	end)
-
-	terminate.MouseLeave:Connect(function()
-		terminate.BackgroundColor3 = Color3.fromRGB(210, 60, 60)
-	end)
-
 	terminate.MouseButton1Click:Connect(function()
 		if screenGui then
 			screenGui:Destroy()
@@ -358,61 +355,4 @@ settings.MouseButton1Click:Connect(function()
 		warn("Celestial terminated")
 	end)
 end)
--- Parent buttons
-for _, b in ipairs({run, clear, open, save, settings}) do
-	b.Parent = bottomBar
-end
-
--- Button functionality
-run.MouseButton1Click:Connect(function()
-	if inputBox.Text ~= "" then
-		local ok, err = pcall(function()
-			loadstring(inputBox.Text)()
-		end)
-		if not ok then warn("Celestial Error:", err) end
-	end
-end)
-
-clear.MouseButton1Click:Connect(function()
-	inputBox.Text = ""
-end)
-
-open.MouseButton1Click:Connect(function()
-	print("Open pressed (executor FS hook)")
-end)
-
-save.MouseButton1Click:Connect(function()
-	print("Save pressed (executor FS hook)")
-end)
-
-settings.MouseButton1Click:Connect(function()
-	print("Settings pressed")
-end)
--- Settings button functionality
-settings.MouseButton1Click:Connect(function()
-    -- Prevent multiple panels
-    if mainFrame:FindFirstChild("SettingsPanel") then return end
-
-    -- Create Settings Panel
-    local settingsPanel = Instance.new("Frame")
-    settingsPanel.Name = "SettingsPanel"
-    settingsPanel.Size = UDim2.new(0, 300, 0, 180)
-    settingsPanel.Position = UDim2.new(0.5, -150, 0.5, -90)
-    settingsPanel.BackgroundColor3 = Color3.fromRGB(20, 25, 40)
-    settingsPanel.BorderSizePixel = 0
-    settingsPanel.ZIndex = 200
-    settingsPanel.Parent = mainFrame
-
-    local corner = Instance.new("UICorner", settingsPanel)
-    corner.CornerRadius = UDim.new(0, 12)
-
-    local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, 0, 0, 40)
-    title.Position = UDim2.new(0, 0, 0, 0)
-    title.BackgroundTransparency = 1
-    title.Text = "Settings"
-    title.TextColor3 = Color3.fromRGB(200, 230, 255)
-    title.TextSize = 22
-    title.Font = Enum.Font.GothamBold
-    title.Parent = settingsPanel
 print("Celestial UI loaded • made by oscar")
