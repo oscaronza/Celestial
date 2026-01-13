@@ -66,7 +66,6 @@ pcall(function()
 	task.wait(0.4)
 	splashGui:Destroy()
 end)
-
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
