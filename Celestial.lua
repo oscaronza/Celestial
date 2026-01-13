@@ -1,6 +1,5 @@
 if getgenv().CelestialLoaded then return end
 getgenv().CelestialLoaded = true
-
 warn("Celestial loaded")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
