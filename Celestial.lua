@@ -112,7 +112,7 @@ scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)  -- good
 scrollFrame.ScrollBarThickness = 6
 scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 190, 255)
 scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
-
+scrollFrame.Parent = mainFrame
 -- Input box
 local inputBox = Instance.new("TextBox")
 inputBox.Size = UDim2.new(1, -20, 1, -20)  -- fills with good padding (change from -10 if too tight)
@@ -157,7 +157,7 @@ inputBox:GetPropertyChangedSignal("Text"):Connect(updateCanvas)
 -- =====================================
 local dragBar = Instance.new("Frame")
 dragBar.Name = "DragBar"
-dragBar.Size = UDim2.new(1, 0, 0, 120)
+dragBar.Size = UDim2.new(1, 0, 0, 38)
 dragBar.Position = UDim2.new(0, 0, 0, 0)
 dragBar.BackgroundTransparency = 1
 dragBar.BorderSizePixel = 0
@@ -170,20 +170,43 @@ if mainFrame.AbsoluteSize.X == 0 then
 end
 
 local dragging = false
+local dragInput = nil
 local dragStart = nil
 local startPos = nil
 
-local function updateDrag(input)
-	local delta = input.Position - dragStart
-	local newX = startPos.X.Offset + delta.X
-	local newY = startPos.Y.Offset + delta.Y
+dragBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+        
+        local conn
+        conn = input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+                conn:Disconnect()
+            end
+        end)
+    end
+end)
 
-	local screen = workspace.CurrentCamera.ViewportSize
-	newX = math.clamp(newX, 0, screen.X - mainFrame.AbsoluteSize.X)
-	newY = math.clamp(newY, 0, screen.Y - mainFrame.AbsoluteSize.Y)
+dragBar.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
 
-	mainFrame.Position = UDim2.new(0, newX, 0, newY)
-end
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        local delta = input.Position - dragStart
+        local newX = startPos.X.Offset + delta.X
+        local newY = startPos.Y.Offset + delta.Y
+        local screen = workspace.CurrentCamera.ViewportSize
+        newX = math.clamp(newX, 0, screen.X - mainFrame.AbsoluteSize.X)
+        newY = math.clamp(newY, 0, screen.Y - mainFrame.AbsoluteSize.Y)
+        mainFrame.Position = UDim2.new(0, newX, 0, newY)
+    end
+end)
 
 dragBar.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
