@@ -1,71 +1,74 @@
--- =====================================
--- Celestial Splash Screen
--- =====================================
-pcall(function()
-	local TweenService = game:GetService("TweenService")
-	local Players = game:GetService("Players")
-	local player = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
 
-	local splashGui = Instance.new("ScreenGui")
-	splashGui.Name = "CelestialSplash"
-	splashGui.ResetOnSpawn = false
-	splashGui.Parent = player:WaitForChild("PlayerGui")
+local player = Players.LocalPlayer or Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
+local gui = player:WaitForChild("PlayerGui")
 
-	local frame = Instance.new("Frame")
-	frame.Size = UDim2.new(0, 260, 0, 120)
-	frame.Position = UDim2.new(0.5, -130, 0.5, -60)
-	frame.BackgroundColor3 = Color3.fromRGB(10, 14, 30)
-	frame.BackgroundTransparency = 1
-	frame.Parent = splashGui
+local splashGui = Instance.new("ScreenGui")
+splashGui.Name = "CelestialSplash"
+splashGui.IgnoreGuiInset = true
+splashGui.ResetOnSpawn = false
+splashGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+splashGui.Parent = gui
 
-	Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 260, 0, 120)
+frame.Position = UDim2.new(0.5, -130, 0.45, -60)
+frame.BackgroundColor3 = Color3.fromRGB(10, 14, 30)
+frame.BackgroundTransparency = 1
+frame.ZIndex = 999
+frame.Parent = splashGui
 
-	local stroke = Instance.new("UIStroke", frame)
-	stroke.Color = Color3.fromRGB(120, 200, 255)
-	stroke.Transparency = 1
-	stroke.Thickness = 2
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
 
-	local text = Instance.new("TextLabel")
-	text.Size = UDim2.new(1, 0, 1, 0)
-	text.BackgroundTransparency = 1
-	text.Text = "CELESTIAL"
-	text.Font = Enum.Font.GothamBlack
-	text.TextSize = 36
-	text.TextColor3 = Color3.fromRGB(140, 200, 255)
-	text.TextTransparency = 1
-	text.Parent = frame
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(120, 200, 255)
+stroke.Thickness = 2
+stroke.Transparency = 1
 
-	-- Fade in
-	TweenService:Create(frame, TweenInfo.new(0.35), {
-		BackgroundTransparency = 0
-	}):Play()
+local text = Instance.new("TextLabel")
+text.Size = UDim2.new(1, 0, 1, 0)
+text.BackgroundTransparency = 1
+text.Text = "CELESTIAL"
+text.Font = Enum.Font.GothamBlack
+text.TextSize = 36
+text.TextColor3 = Color3.fromRGB(140, 200, 255)
+text.TextTransparency = 1
+text.ZIndex = 1000
+text.Parent = frame
 
-	TweenService:Create(text, TweenInfo.new(0.35), {
-		TextTransparency = 0
-	}):Play()
+-- Fade in
+TweenService:Create(frame, TweenInfo.new(0.3), {
+	BackgroundTransparency = 0
+}):Play()
 
-	TweenService:Create(stroke, TweenInfo.new(0.35), {
-		Transparency = 0.4
-	}):Play()
+TweenService:Create(text, TweenInfo.new(0.3), {
+	TextTransparency = 0
+}):Play()
 
-	task.wait(1)
+TweenService:Create(stroke, TweenInfo.new(0.3), {
+	Transparency = 0.35
+}):Play()
 
-	-- Fade out
-	TweenService:Create(frame, TweenInfo.new(0.35), {
-		BackgroundTransparency = 1
-	}):Play()
+task.wait(1)
 
-	TweenService:Create(text, TweenInfo.new(0.35), {
-		TextTransparency = 1
-	}):Play()
+-- Fade out
+TweenService:Create(frame, TweenInfo.new(0.3), {
+	BackgroundTransparency = 1
+}):Play()
 
-	TweenService:Create(stroke, TweenInfo.new(0.35), {
-		Transparency = 1
-	}):Play()
+TweenService:Create(text, TweenInfo.new(0.3), {
+	TextTransparency = 1
+}):Play()
 
-	task.wait(0.4)
-	splashGui:Destroy()
-end)
+TweenService:Create(stroke, TweenInfo.new(0.3), {
+	Transparency = 1
+}):Play()
+
+task.wait(0.35)
+splashGui:Destroy()
+if getgenv().CelestialLoaded then return end
+getgenv().CelestialLoaded = true
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
