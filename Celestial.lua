@@ -274,7 +274,90 @@ local clear = btn("🧹")
 local open = btn("📂")
 local save = btn("💾")
 local settings = btn("⚙")
+-- ===============================
+-- Settings Panel UI
+-- ===============================
+settings.MouseButton1Click:Connect(function()
+	-- Prevent duplicate panels
+	if mainFrame:FindFirstChild("SettingsPanel") then return end
 
+	local panel = Instance.new("Frame")
+	panel.Name = "SettingsPanel"
+	panel.Size = UDim2.new(0, 320, 0, 200)
+	panel.Position = UDim2.new(0.5, -160, 0.5, -100)
+	panel.BackgroundColor3 = Color3.fromRGB(18, 22, 40)
+	panel.BorderSizePixel = 0
+	panel.ZIndex = 500
+	panel.Parent = mainFrame
+
+	Instance.new("UICorner", panel).CornerRadius = UDim.new(0, 14)
+
+	local stroke = Instance.new("UIStroke", panel)
+	stroke.Color = Color3.fromRGB(120, 200, 255)
+	stroke.Transparency = 0.4
+	stroke.Thickness = 1.5
+
+	-- Title
+	local title = Instance.new("TextLabel")
+	title.Size = UDim2.new(1, -40, 0, 40)
+	title.Position = UDim2.new(0, 20, 0, 10)
+	title.BackgroundTransparency = 1
+	title.Text = "Settings"
+	title.Font = Enum.Font.GothamBold
+	title.TextSize = 22
+	title.TextColor3 = Color3.fromRGB(200, 230, 255)
+	title.ZIndex = 501
+	title.Parent = panel
+
+	-- Close Button
+	local close = Instance.new("TextButton")
+	close.Size = UDim2.new(0, 32, 0, 32)
+	close.Position = UDim2.new(1, -42, 0, 10)
+	close.Text = "✕"
+	close.Font = Enum.Font.GothamBold
+	close.TextSize = 18
+	close.TextColor3 = Color3.fromRGB(200, 200, 200)
+	close.BackgroundColor3 = Color3.fromRGB(30, 35, 60)
+	close.BorderSizePixel = 0
+	close.ZIndex = 501
+	close.Parent = panel
+	Instance.new("UICorner", close).CornerRadius = UDim.new(0, 8)
+
+	close.MouseButton1Click:Connect(function()
+		panel:Destroy()
+	end)
+
+	-- TERMINATE BUTTON
+	local terminate = Instance.new("TextButton")
+	terminate.Size = UDim2.new(0, 220, 0, 60)
+	terminate.Position = UDim2.new(0.5, -110, 0.5, -10)
+	terminate.BackgroundColor3 = Color3.fromRGB(210, 60, 60)
+	terminate.Text = "TERMINATE"
+	terminate.Font = Enum.Font.GothamBlack
+	terminate.TextSize = 24
+	terminate.TextColor3 = Color3.fromRGB(255, 255, 255)
+	terminate.BorderSizePixel = 0
+	terminate.ZIndex = 501
+	terminate.Parent = panel
+
+	Instance.new("UICorner", terminate).CornerRadius = UDim.new(0, 14)
+
+	terminate.MouseEnter:Connect(function()
+		terminate.BackgroundColor3 = Color3.fromRGB(240, 80, 80)
+	end)
+
+	terminate.MouseLeave:Connect(function()
+		terminate.BackgroundColor3 = Color3.fromRGB(210, 60, 60)
+	end)
+
+	terminate.MouseButton1Click:Connect(function()
+		if screenGui then
+			screenGui:Destroy()
+		end
+		getgenv().CelestialLoaded = false
+		warn("Celestial terminated")
+	end)
+end)
 -- Parent buttons
 for _, b in ipairs({run, clear, open, save, settings}) do
 	b.Parent = bottomBar
@@ -332,36 +415,4 @@ settings.MouseButton1Click:Connect(function()
     title.TextSize = 22
     title.Font = Enum.Font.GothamBold
     title.Parent = settingsPanel
-
-    -- Terminate Button
-    local terminateBtn = Instance.new("TextButton")
-    terminateBtn.Size = UDim2.new(0, 200, 0, 60)
-    terminateBtn.Position = UDim2.new(0.5, -100, 0.5, -30)
-    terminateBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-    terminateBtn.Text = "TERMINATE"
-    terminateBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    terminateBtn.TextSize = 24
-    terminateBtn.Font = Enum.Font.GothamBlack
-    terminateBtn.Parent = settingsPanel
-
-    local btnCorner = Instance.new("UICorner", terminateBtn)
-    btnCorner.CornerRadius = UDim.new(0, 12)
-
-    terminateBtn.MouseEnter:Connect(function()
-        terminateBtn.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
-    end)
-
-    terminateBtn.MouseLeave:Connect(function()
-        terminateBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-    end)
-
-    terminateBtn.MouseButton1Click:Connect(function()
-        -- Destroy the entire Celestial UI
-        if screenGui then
-            screenGui:Destroy()
-        end
-        getgenv().CelestialLoaded = false
-        warn("Celestial terminated")
-    end)
-end)
 print("Celestial UI loaded • made by oscar")
