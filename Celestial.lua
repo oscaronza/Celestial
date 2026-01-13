@@ -1,6 +1,72 @@
-if getgenv().CelestialLoaded then return end
-getgenv().CelestialLoaded = true
-warn("Celestial loaded")
+-- =====================================
+-- Celestial Splash Screen
+-- =====================================
+pcall(function()
+	local TweenService = game:GetService("TweenService")
+	local Players = game:GetService("Players")
+	local player = Players.LocalPlayer
+
+	local splashGui = Instance.new("ScreenGui")
+	splashGui.Name = "CelestialSplash"
+	splashGui.ResetOnSpawn = false
+	splashGui.Parent = player:WaitForChild("PlayerGui")
+
+	local frame = Instance.new("Frame")
+	frame.Size = UDim2.new(0, 260, 0, 120)
+	frame.Position = UDim2.new(0.5, -130, 0.5, -60)
+	frame.BackgroundColor3 = Color3.fromRGB(10, 14, 30)
+	frame.BackgroundTransparency = 1
+	frame.Parent = splashGui
+
+	Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
+
+	local stroke = Instance.new("UIStroke", frame)
+	stroke.Color = Color3.fromRGB(120, 200, 255)
+	stroke.Transparency = 1
+	stroke.Thickness = 2
+
+	local text = Instance.new("TextLabel")
+	text.Size = UDim2.new(1, 0, 1, 0)
+	text.BackgroundTransparency = 1
+	text.Text = "CELESTIAL"
+	text.Font = Enum.Font.GothamBlack
+	text.TextSize = 36
+	text.TextColor3 = Color3.fromRGB(140, 200, 255)
+	text.TextTransparency = 1
+	text.Parent = frame
+
+	-- Fade in
+	TweenService:Create(frame, TweenInfo.new(0.35), {
+		BackgroundTransparency = 0
+	}):Play()
+
+	TweenService:Create(text, TweenInfo.new(0.35), {
+		TextTransparency = 0
+	}):Play()
+
+	TweenService:Create(stroke, TweenInfo.new(0.35), {
+		Transparency = 0.4
+	}):Play()
+
+	task.wait(1)
+
+	-- Fade out
+	TweenService:Create(frame, TweenInfo.new(0.35), {
+		BackgroundTransparency = 1
+	}):Play()
+
+	TweenService:Create(text, TweenInfo.new(0.35), {
+		TextTransparency = 1
+	}):Play()
+
+	TweenService:Create(stroke, TweenInfo.new(0.35), {
+		Transparency = 1
+	}):Play()
+
+	task.wait(0.4)
+	splashGui:Destroy()
+end)
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
