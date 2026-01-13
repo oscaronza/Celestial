@@ -102,51 +102,58 @@ underlineGradient.Color = ColorSequence.new{
 }
 underlineGradient.Parent = underline
 
+-- =====================================
+-- Scrollable Input Box
+-- =====================================
+
+-- Create scrolling frame for input box
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(0, 460, 0, 140)
+scrollFrame.Position = UDim2.new(0.5, -230, 0, 160)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(15, 18, 32)
+scrollFrame.BorderSizePixel = 0
+scrollFrame.CanvasSize = UDim2.new(0, 0, 5, 0)
+scrollFrame.ScrollBarThickness = 6
+scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 190, 255)
+scrollFrame.Parent = mainFrame
+
 -- Input box
 local inputBox = Instance.new("TextBox")
-inputBox.Size = UDim2.new(0, 460, 0, 140)
-inputBox.Position = UDim2.new(0.5, -230, 0, 160)
-inputBox.BackgroundColor3 = Color3.fromRGB(15, 18, 32)
-inputBox.BorderSizePixel = 0
-inputBox.TextColor3 = Color3.fromRGB(220, 230, 255)
-inputBox.PlaceholderColor3 = Color3.fromRGB(100, 120, 180)
-inputBox.PlaceholderText = "-- paste your script here..."
-inputBox.TextXAlignment = Enum.TextXAlignment.Left
-inputBox.TextYAlignment = Enum.TextYAlignment.Top
+inputBox.Size = UDim2.new(1, -10, 1, -10)
+inputBox.Position = UDim2.new(0, 5, 0, 5)
+inputBox.BackgroundTransparency = 1
+inputBox.Text = ""
 inputBox.ClearTextOnFocus = false
 inputBox.MultiLine = true
+inputBox.TextWrapped = true
+inputBox.TextXAlignment = Enum.TextXAlignment.Left
+inputBox.TextYAlignment = Enum.TextYAlignment.Top
 inputBox.TextSize = 15
 inputBox.Font = Enum.Font.Code
-inputBox.Parent = mainFrame
+inputBox.Parent = scrollFrame
 
 local inputCorner = Instance.new("UICorner")
 inputCorner.CornerRadius = UDim.new(0, 10)
 inputCorner.Parent = inputBox
 
--- Execute button
-local execButton = Instance.new("TextButton")
-execButton.Size = UDim2.new(0, 140, 0, 46)
-execButton.Position = UDim2.new(0.5, -70, 1, -70)
-execButton.BackgroundColor3 = Color3.fromRGB(40, 90, 220)
-execButton.BorderSizePixel = 0
-execButton.Text = "EXECUTE"
-execButton.TextColor3 = Color3.fromRGB(235, 245, 255)
-execButton.TextSize = 18
-execButton.Font = Enum.Font.GothamBold
-execButton.Parent = mainFrame
+-- Optional: clear on first focus
+local firstFocus = true
+inputBox.Focused:Connect(function()
+	if firstFocus then
+		inputBox.Text = ""
+		firstFocus = false
+	end
+end)
 
-local execCorner = Instance.new("UICorner")
-execCorner.CornerRadius = UDim.new(0, 10)
-execCorner.Parent = execButton
+-- Update canvas size dynamically
+inputBox:GetPropertyChangedSignal("Text"):Connect(function()
+	local textSize = inputBox.TextBounds.Y + 20
+	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, math.max(textSize, scrollFrame.AbsoluteSize.Y))
+end)
 
-local execStroke = Instance.new("UIStroke")
-execStroke.Color = Color3.fromRGB(120, 200, 255)
-execStroke.Thickness = 1.5
-execStroke.Transparency = 0.5
-execStroke.Parent = execButton
-
--- ────────────────────────────────────────────────
--- Drag bar
+-- =====================================
+-- Drag Bar
+-- =====================================
 local dragBar = Instance.new("Frame")
 dragBar.Name = "DragBar"
 dragBar.Size = UDim2.new(1, 0, 0, 120)
@@ -156,7 +163,7 @@ dragBar.BorderSizePixel = 0
 dragBar.ZIndex = 50
 dragBar.Parent = mainFrame
 
--- wait for AbsoluteSize to be ready
+-- Dragging logic
 if mainFrame.AbsoluteSize.X == 0 then
 	mainFrame:GetPropertyChangedSignal("AbsoluteSize"):Wait()
 end
@@ -196,62 +203,9 @@ UserInputService.InputChanged:Connect(function(input)
 	end
 end)
 
--- ────────────────────────────────────────────────
--- Stars
-local starFolder = Instance.new("Folder")
-starFolder.Name = "Stars"
-starFolder.Parent = mainFrame
-
-local stars = {}
-for i = 1, 50 do
-	local size = math.random(4, 10)
-	local star = Instance.new("Frame")
-	star.Size = UDim2.new(0, size, 0, size)
-	star.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	star.BackgroundTransparency = 0.3 + math.random() * 0.4
-	star.BorderSizePixel = 0
-	star.ZIndex = 0
-	star.Parent = starFolder
-
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(1, 0)
-	corner.Parent = star
-
-	local x = math.random() * 0.9 + 0.05
-	local y = math.random() * 0.7 + 0.05
-	star.Position = UDim2.new(x, 0, y, 0)
-
-	local fadeTween = TweenService:Create(star, TweenInfo.new(5 + math.random()*5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
-		BackgroundTransparency = 0.5 + math.random()*0.3
-	})
-	fadeTween:Play()
-
-	stars[#stars+1] = {frame = star, dx = math.random(-5,5)/5000, dy = math.random(-4,4)/5000}
-end
-
--- Drift stars safely
-RunService.Heartbeat:Connect(function()
-	for _, s in pairs(stars) do
-		local f = s.frame
-		local nx = math.clamp(f.Position.X.Scale + s.dx, 0, 1)
-		local ny = math.clamp(f.Position.Y.Scale + s.dy, 0, 1)
-		f.Position = UDim2.new(nx, 0, ny, 0)
-	end
-end)
--- ────────────────────────────────────────────────
--- Bottom Control Bar (Merged & Fixed)
-
--- Adjust input box so bar is visible
-inputBox.Size = UDim2.new(0, 460, 0, 120)
-inputBox.Position = UDim2.new(0.5, -230, 0, 160)
-
--- Hide old execute button
-execButton.Visible = false
-
--- Allow UI to render above
-mainFrame.ClipsDescendants = false
-
--- Bottom bar
+-- =====================================
+-- Bottom Control Bar
+-- =====================================
 local bottomBar = Instance.new("Frame")
 bottomBar.Name = "BottomBar"
 bottomBar.Size = UDim2.new(1, -24, 0, 50)
@@ -261,7 +215,6 @@ bottomBar.BorderSizePixel = 0
 bottomBar.ZIndex = 100
 bottomBar.Parent = mainFrame
 
--- Styling
 local corner = Instance.new("UICorner", bottomBar)
 corner.CornerRadius = UDim.new(0, 12)
 
@@ -277,7 +230,6 @@ gradient.Color = ColorSequence.new{
 }
 gradient.Rotation = 90
 
--- Button layout
 local layout = Instance.new("UIListLayout", bottomBar)
 layout.FillDirection = Enum.FillDirection.Horizontal
 layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
@@ -357,4 +309,5 @@ end)
 settings.MouseButton1Click:Connect(function()
 	print("Settings pressed")
 end)
-print("Celestial UI loaded • made by oscar ")
+
+print("Celestial UI loaded • made by oscar")
