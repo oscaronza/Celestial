@@ -108,16 +108,15 @@ scrollFrame.Size = UDim2.new(0, 460, 0, 140)
 scrollFrame.Position = UDim2.new(0.5, -230, 0, 160)
 scrollFrame.BackgroundColor3 = Color3.fromRGB(15, 18, 32)
 scrollFrame.BorderSizePixel = 0
-scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)  -- Changed: start at 0 height (we'll auto-update it)
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)  -- good
 scrollFrame.ScrollBarThickness = 6
 scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 190, 255)
-scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y  -- Added: only scroll vertically
-scrollFrame.Parent = mainFrame
+scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 
 -- Input box
 local inputBox = Instance.new("TextBox")
-inputBox.Size = UDim2.new(1, -10, 1, -10)
-inputBox.Position = UDim2.new(0, 5, 0, 5)
+inputBox.Size = UDim2.new(1, -20, 1, -20)  -- fills with good padding (change from -10 if too tight)
+inputBox.Position = UDim2.new(0, 10, 0, 10)
 inputBox.BackgroundTransparency = 1
 inputBox.Text = ""
 inputBox.ClearTextOnFocus = false
@@ -127,6 +126,7 @@ inputBox.TextXAlignment = Enum.TextXAlignment.Left
 inputBox.TextYAlignment = Enum.TextYAlignment.Top
 inputBox.TextSize = 15
 inputBox.Font = Enum.Font.Code
+inputBox.TextColor3 = Color3.fromRGB(255, 255, 255)  -- white as we discussed
 inputBox.Parent = scrollFrame
 local inputCorner = Instance.new("UICorner")
 inputCorner.CornerRadius = UDim.new(0, 10)
@@ -283,7 +283,48 @@ local settings = btn("⚙")
 for _, b in ipairs({run, clear, open, save, settings}) do
 	b.Parent = bottomBar
 end
+-- =====================================
+-- Button Functionality (add this whole block here!)
+-- =====================================
 
+-- Run button: Execute the code from inputBox using loadstring
+run.MouseButton1Click:Connect(function()
+    local code = inputBox.Text
+    
+    if code == "" or code:match("^%s*$") then  -- check if empty or only spaces
+        warn("Nothing to execute! Type some code first.")
+        return
+    end
+    
+    print("Executing code from Celestial UI...")
+    
+    local success, result = pcall(function()
+        return loadstring(code)()  -- your executor provides/enables this
+    end)
+    
+    if success then
+        print("Executed successfully!")
+    else
+        warn("Execution error: " .. tostring(result))
+        -- Optional: you could show this in a red label on the UI later
+    end
+end)
+
+-- Clear button: Wipe the input box
+clear.MouseButton1Click:Connect(function()
+    inputBox.Text = ""
+end)
+
+-- Settings button is already connected higher up in your script (keep that)
+-- For open/save: if you want file handling later, add here (needs executor file API)
+-- Example placeholder for open/save:
+open.MouseButton1Click:Connect(function()
+    warn("Open feature not implemented yet!")
+end)
+
+save.MouseButton1Click:Connect(function()
+    warn("Save feature not implemented yet!")
+end)
 -- ===============================
 -- Settings Panel
 -- ===============================
